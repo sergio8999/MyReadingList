@@ -83,7 +83,7 @@ function borrarDatosInpunt(){
 function dibujarTabla(lista){
     options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     tabla = "";
-    tabla += "<table>";
+    tabla += "<table id='tabla'>";
     tabla += "<th>Titulo</th><th>Genero</th><th>Autor</th><th>Leido</th><th>Fecha</th>";
     lista.arrayBooks.forEach(libro => {
         tabla += "<tr>";
