@@ -1,77 +1,81 @@
-/* Clases */
-
-class Booklist{
-    constructor(){
-        this.arrayBooks = [];
-        this.currentBookIndex = 0;
-        this.lastbook = null;
-    }
-
-    // Propiedades
-    get readBooks(){
-        return this.arrayBooks.filter((book) => book.read).length;
-    }
-    get notReadBooks(){
-        return this.arrayBooks.filter((book) => !book.read).length;
-    }
-    get nextBook(){
-        if(this.currentBookIndex < this.arrayBooks.length-1)
-            return this.arrayBooks[this.currentBookIndex+1];
-        return null;
-    }
-    get currentBook(){
-        if(this.arrayBooks.length != 0)
-            return this.arrayBooks[this.currentBookIndex];
-        return null;
-    }
-    
-    // Métodos 
-
-    add(book) {
-        return this.arrayBooks.push(book);
-    }
-
-    finishCurrent(){
-        if(this.currentBookIndex < this.arrayBooks.length){
-            this.arrayBooks[this.currentBookIndex].read = true;
-            this.arrayBooks[this.currentBookIndex].readDate = new Date(Date.now());
-            this.lastbook = this.arrayBooks[this.currentBookIndex];
-            this.currentBookIndex++;
-        }else
-            console.log("No esta leyendo ningún libro");
-    }
-}
-
-class Book{
-    constructor(title,genre,author){
-        this.title = title;
-        this.genre = genre;
-        this.author = author;
-        this.read = false;
-        this.readDate = "";
-    }
-}
+import{Book,Booklist} from "./clasesBook.js";
 
 // Main
-
-window.addEventListener('load',main);
 const listaLibros = new Booklist();
+var codLibro = 0;
+window.addEventListener('load',main);
+
 
 function main(){
     let boton = document.querySelector('button');
-    dibujarTabla(listaLibros);
     boton.addEventListener('click',añadirLibro);
-    let tabla = document.getElementById('tabla');
-    tabla.addEventListener('click',finalizarLibro);
+    //let tabla = document.getElementById("tabla");
+    
 }
 
 function añadirLibro(){
     let titulo = document.getElementById('tituloLibro').value;
     let genero = document.getElementById('generoLibro').value;
     let autor = document.getElementById('autorLibro').value;
-    listaLibros.add(new Book(titulo,genero,autor));
+    let libro = new Book(titulo,genero,autor);
+    libro.codBook = codLibro;
+    listaLibros.add(libro);
     borrarDatosInpunt();
-    dibujarTabla(listaLibros);
+    añadirLibroTabla(libro);
+    codLibro++;
+    //dibujarTabla(listaLibros);
+}
+
+/**
+ * 
+ * @param {Book} libro 
+ */
+function añadirLibroTabla(libro){
+    let trLibro = document.createElement("tr");
+    trLibro.id = libro.codBook;
+
+    let tdTitulo = document.createElement("td");
+    tdTitulo.textContent = libro.title;
+    let tdAuthor = document.createElement("td");
+    tdAuthor.textContent = libro.author;
+    let tdGenre = document.createElement("td");
+    tdGenre.textContent = libro.genre;
+    let tdLeido = document.createElement("td");
+    tdLeido.textContent = libro.read;
+    let tdFecha = document.createElement("td");
+    tdFecha.textContent = libro.readDate;
+    let tdAcciones = document.createElement("td");
+    let iconoBorrar = document.createElement("span");
+    iconoBorrar.classList.add("material-icons");
+    iconoBorrar.textContent = "delete";
+    let libroLeido = document.createElement("span");
+    libroLeido.classList.add("material-icons");
+    libroLeido.textContent = "book";
+    
+
+    trLibro.appendChild(tdTitulo);
+    trLibro.appendChild(tdAuthor);
+    trLibro.appendChild(tdGenre);
+    trLibro.appendChild(tdLeido);
+    trLibro.appendChild(tdFecha);
+    trLibro.appendChild(tdAcciones);
+    tdAcciones.append(iconoBorrar);
+    tdAcciones.append(libroLeido);
+    iconoBorrar.addEventListener("click", borrarFila);
+    libroLeido.addEventListener('click',finalizarLibro);
+
+    document.getElementById("tabla").appendChild(trLibro);
+
+}
+
+/**
+ * 
+ * @param {MouseEvent} e 
+ */
+function borrarFila(e){
+    let fila = e.target.parentNode.parentNode.id;
+    listaLibros.removeBooks(fila);
+    e.target.parentNode.parentNode.remove();
 }
 
 function borrarDatosInpunt(){
@@ -80,30 +84,14 @@ function borrarDatosInpunt(){
     document.getElementById('autorLibro').value = "";
 }
 
-function dibujarTabla(lista){
-    options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    tabla = "";
-    tabla += "<table id='tabla'>";
-    tabla += "<th>Titulo</th><th>Genero</th><th>Autor</th><th>Leido</th><th>Fecha</th>";
-    lista.arrayBooks.forEach(libro => {
-        tabla += "<tr>";
-        tabla += "<td>"+ libro.title+"</td>";
-        tabla += "<td>"+ libro.genre+"</td>";
-        tabla += "<td>"+ libro.author+"</td>";
-        if(libro.read){
-            tabla += "<td>Si</td>";
-            tabla += "<td>"+ libro.readDate.toLocaleDateString('es-ES', options)+ "</td>";
-        }else{
-        tabla += "<td>No</td>";
-        tabla += "<td> </td>";
-        }
-        tabla += "</tr>";
-    });
-    tabla += "</table>";
-    document.getElementById("tabla").innerHTML = tabla;
-}
-
-function finalizarLibro(){
-    listaLibros.finishCurrent();
-    dibujarTabla(listaLibros);
+/**
+ * 
+ * @param {MouseEvent} e 
+ */
+function finalizarLibro(e){
+    let fila = e.target.parentNode.parentNode.id;
+    let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    e.target.parentNode.parentNode.childNodes[3].textContent="Si";
+    e.target.parentNode.parentNode.childNodes[4].textContent=new Date().toLocaleDateString('es-ES', options);
+    listaLibros.finishCurrent(fila);
 }

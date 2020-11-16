@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <link rel="stylesheet" href="bookList.css">
-  <script src="bookList.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+  <script src="bookList.js" type="module"></script>
 </head>
 <body>
   <div class="container">
@@ -39,6 +41,18 @@
     </div>
 </div>
 <br>
-    <div id="tabla"></div>
+    <div id="divTabla">
+        <table id="tabla">
+          <tr>
+            <th><input type="text" value="Titulo" class="borde"></th>
+            <th>Autor</th>
+            <th>Genero</th>
+            <th>Leido</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+          </tr>
+        </table>
+
+    </div>
 </body>
 </html>

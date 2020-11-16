@@ -96,3 +96,9 @@ input[type=text], select, textarea{
     background-color: #763626;
     color: black;
   }
+  input:focus{
+    background-color: inherit;
+    border: 0px;
+    border-color:  #763626;
+    pointer-events: none;
+  }
